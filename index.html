@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Up Play</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #0b0b0b;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* TELA DE LOGIN */
+        #loginScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #0b0b0b;
+            position: absolute;
+            top: 0; left: 0; width: 100%; z-index: 10;
+        }
+        .login-card {
+            background: #141414;
+            padding: 40px;
+            border-radius: 12px;
+            border: 2px solid #222;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+        }
+        /* LOGO ESTILIZADA (Triângulo arredondado + UP Play) */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .play-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #e50914;
+            border-radius: 14px; /* Bordas arredondadas */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+        }
+        /* Desenho geométrico do triângulo de play */
+        .play-icon::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-left: 18px solid #ffffff;
+            margin-left: 3px;
+        }
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #e50914;
+            letter-spacing: 1px;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #1a1a1a;
+            color: white;
+            font-size: 16px;
+        }
+        .login-card input:focus {
+            border-color: #e50914;
+            outline: none;
+        }
+        /* Botão / Nome "Acessar perfil" */
+        .btn-acessar {
+            background: none;
+            border: none;
+            color: #e50914;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            padding: 10px;
+            letter-spacing: 0.5px;
+            transition: 0.2s;
+        }
+        .btn-acessar:hover {
+            color: #f40612;
+            text-decoration: underline;
+        }
+        #erroLogin {
+            color: #e50914;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        /* PAINEL PRINCIPAL (APÓS LOGIN) */
+        #mainApp {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+            background: #0f0f0f;
+        }
+        /* Topo / Navbar */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background: #111;
+            border-bottom: 2px solid #222;
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e50914;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .tab-btn.active, .tab-btn:hover {
+            color: #fff;
+        }
+        .search-box input {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #444;
+            background: #1a1a1a;
+            color: white;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        /* Conteúdo Principal / Grade de Filmes */
+        .content-area {
+            flex: 1;
+            padding: 30px 40px;
+            overflow-y: auto;
+        }
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .movie-card {
+            background: #181818;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #262626;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+        .movie-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            border-color: #e50914;
+        }
+        .movie-poster {
+            width: 100%;
+            height: 250px;
+            background: #252525;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+            position: relative;
+        }
+        .movie-info {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .movie-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .movie-synopsis {
+            font-size: 0.75rem;
+            color: #999;
+            height: 35px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        /* TELA DO PLAYER (MODAL) */
+        #playerModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+        .modal-content {
+            width: 100%;
+            max-width: 950px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #333;
+        }
+        .modal-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .close-btn {
+            margin-top: 15px;
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <div class="logo-container">
+                <div class="play-icon"></div>
+                <div class="logo-text">UP PLAY</div>
+            </div>
+            <input type="text" id="userInput" placeholder="Usuário">
+            <input type="password" id="passInput" placeholder="Senha">
+            <!-- Botão "acessar perfil" em vermelho embaixo -->
+            <button class="btn-acessar" onclick="realizarLogin()">Acessar perfil</button>
+            <div id="erroLogin"></div>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL -->
+    <div id="mainApp">
+        <div class="navbar">
+            <div class="nav-left">
+                <div class="nav-logo">UP PLAY</div>
+                <div class="nav-tabs">
+                    <button class="tab-btn active" onclick="mudarAba('filmes')">Filmes</button>
+                    <button class="tab-btn" onclick="mudarAba('series')">Séries</button>
+                    <button class="tab-btn" onclick="mudarAba('outras')">Outras Programações</button>
+                </div>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchBar" placeholder="Pesquisar..." onkeyup="filtrarCatalogo()">
+            </div>
+        </div>
+
+        <div class="content-area">
+            <h2 class="section-title" id="tituloSecao">Filmes Disponíveis</h2>
+            
+            <!-- GRADE DE ITENS (25 ITENS CONFIGURADOS) -->
+            <div class="catalog-grid" id="catalogGrid">
+
+                <!-- [FILME 1] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 1]', '[NOME DO FILME 1]')">
+                    <div class="movie-poster">[POSTER / CAPA 1]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 1]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 1: Escreva a sinopse detalhada aqui...]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 2] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 2]', '[NOME DO FILME 2]')">
+                    <div class="movie-poster">[POSTER / CAPA 2]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 2]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 2]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 3] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 3]', '[NOME DO FILME 3]')">
+                    <div class="movie-poster">[POSTER / CAPA 3]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 3]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 3]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 4] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 4]', '[NOME DO FILME 4]')">
+                    <div class="movie-poster">[POSTER / CAPA 4]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 4]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 4]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 5] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 5]', '[NOME DO FILME 5]')">
+                    <div class="movie-poster">[POSTER / CAPA 5]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 5]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 5]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 6] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 6]', '[NOME DO FILME 6]')">
+                    <div class="movie-poster">[POSTER / CAPA 6]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 6]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 6]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 7] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 7]', '[NOME DO FILME 7]')">
+                    <div class="movie-poster">[POSTER / CAPA 7]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 7]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 7]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 8] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 8]', '[NOME DO FILME 8]')">
+                    <div class="movie-poster">[POSTER / CAPA 8]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 8]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 8]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 9] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 9]', '[NOME DO FILME 9]')">
+                    <div class="movie-poster">[POSTER / CAPA 9]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 9]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 9]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 10] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 10]', '[NOME DO FILME 10]')">
+                    <div class="movie-poster">[POSTER / CAPA 10]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 10]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 10]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 11] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 11]', '[NOME DO FILME 11]')">
+                    <div class="movie-poster">[POSTER / CAPA 11]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 11]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 11]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 12] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 12]', '[NOME DO FILME 12]')">
+                    <div class="movie-poster">[POSTER / CAPA 12]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 12]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 12]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 13] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 13]', '[NOME DO FILME 13]')">
+                    <div class="movie-poster">[POSTER / CAPA 13]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 13]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 13]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 14] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 14]', '[NOME DO FILME 14]')">
+                    <div class="movie-poster">[POSTER / CAPA 14]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 14]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 14]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 15] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 15]', '[NOME DO FILME 15]')">
+                    <div class="movie-poster">[POSTER / CAPA 15]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 15]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 15]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 16] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 16]', '[NOME DO FILME 16]')">
+                    <div class="movie-poster">[POSTER / CAPA 16]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 16]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 16]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 17] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 17]', '[NOME DO FILME 17]')">
+                    <div class="movie-poster">[POSTER / CAPA 17]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 17]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 17]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 18] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 18]', '[NOME DO FILME 18]')">
+                    <div class="movie-poster">[POSTER / CAPA 18]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 18]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 18]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 19] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 19]', '[NOME DO FILME 19]')">
+                    <div class="movie-poster">[POSTER / CAPA 19]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 19]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 19]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 20] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 20]', '[NOME DO FILME 20]')">
+                    <div class="movie-poster">[POSTER / CAPA 20]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 20]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 20]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 21] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 21]', '[NOME DO FILME 21]')">
+                    <div class="movie-poster">[POSTER / CAPA 21]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 21]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 21]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 22] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 22]', '[NOME DO FILME 22]')">
+                    <div class="movie-poster">[POSTER / CAPA 22]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 22]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 22]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 23] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 23]', '[NOME DO FILME 23]')">
+                    <div class="movie-poster">[POSTER / CAPA 23]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 23]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 23]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 24] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 24]', '[NOME DO FILME 24]')">
+                    <div class="movie-poster">[POSTER / CAPA 24]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 24]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 24]</div>
+                    </div>
+                </div>
+
+                <!-- [FILME 25] -->
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 25]', '[NOME DO FILME 25]')">
+                    <div class="movie-poster">[POSTER / CAPA 25]</div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 25]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 25]</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DO PLAYER DE VÍDEO -->
+    <div id="playerModal">
+        <div class="modal-content">
+            <iframe id="videoFrame" src="" allowfullscreen></iframe>
+        </div>
+        <button class="close-btn" onclick="fecharPlayer()">Fechar / Voltar</button>
+    </div>
+
+    <script>
+        // BANCO DE USUÁRIOS (Conforme solicitado)
+        const usuariosCadastrados = {
+            "UP PLAY 1": "UP 123"
+        };
+
+        function realizarLogin() {
+            const usuario = document.getElementById('userInput').value.trim();
+            const senha = document.getElementById('passInput').value.trim();
+            const erro = document.getElementById('erroLogin');
+
+            if (usuariosCadastrados[usuario] && usuariosCadastrados[usuario] === senha) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'flex';
+            } else {
+                erro.innerText = "Usuário ou senha inválidos!";
+            }
+        }
+
+        function abrirPlayer(url, nome) {
+            document.getElementById('videoFrame').src = url;
+            document.getElementById('playerModal').style.display = 'flex';
+        }
+
+        function fecharPlayer() {
+            document.getElementById('videoFrame').src = "";
+            document.getElementById('playerModal').style.display = 'none';
+        }
+
+        function mudarAba(tipo) {
+            const titulo = document.getElementById('tituloSecao');
+            const botoes = document.querySelectorAll('.tab-btn');
+            
+            botoes.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if(tipo === 'filmes') titulo.innerText = "Filmes Disponíveis";
+            if(tipo === 'series') titulo.innerText = "Séries Disponíveis";
+            if(tipo === 'outras') titulo.innerText = "Outras Programações";
+        }
+
+        function filtrarCatalogo() {
+            const termo = document.getElementById('searchBar').value.toLowerCase();
+            const cards = document.querySelectorAll('.movie-card');
+
+            cards.forEach(card => {
+                const titulo = card.querySelector('.movie-title').innerText.toLowerCase();
+                if (titulo.includes(termo)) {
+                    card.style.display = "flex";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
