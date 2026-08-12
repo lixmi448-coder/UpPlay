@@ -197,6 +197,12 @@
             font-size: 12px;
             text-align: center;
             position: relative;
+            overflow: hidden;
+        }
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .movie-info {
             padding: 12px;
@@ -223,7 +229,62 @@
             -webkit-box-orient: vertical;
         }
 
-        /* MODAL DO PLAYER */
+        /* MODAL DE ESCOLHA (DUBLADO / LEGENDADO) */
+        #optionsModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 99;
+            align-items: center;
+            justify-content: center;
+        }
+        .options-card {
+            background: #181818;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #333;
+            text-align: center;
+            width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .options-card h3 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+        .options-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .btn-opcao {
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-opcao:hover {
+            background: #e50914;
+            border-color: #e50914;
+        }
+        .btn-cancelar-op {
+            background: none;
+            border: none;
+            color: #888;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-cancelar-op:hover {
+            color: #fff;
+        }
+
+        /* MODAL DO PLAYER DE VÍDEO */
         #playerModal {
             display: none;
             position: fixed;
@@ -286,6 +347,7 @@
                     <button class="tab-btn active" onclick="mudarAba('filmes')">Filmes</button>
                     <button class="tab-btn" onclick="mudarAba('series')">Séries</button>
                     <button class="tab-btn" onclick="mudarAba('outras')">Outras Programações</button>
+                    <button class="tab-btn" onclick="fazerLogout()" style="color: #e50914;">Sair</button>
                 </div>
             </div>
             <div class="search-box">
@@ -296,30 +358,36 @@
         <div class="content-area">
             <h2 class="section-title" id="tituloSecao">Filmes Disponíveis</h2>
             
-            <!-- GRADE DE ITENS (25 ITENS CONFIGURADOS) -->
+            <!-- GRADE DE ITENS (25 ITENS COM DUBLADO, LEGENDADO E CAPAS) -->
             <div class="catalog-grid" id="catalogGrid">
 
                 <!-- [FILME 1] -->
-                <div class="movie-card" onclick="abrirPlayer('https://www.youtube.com/embed/xIs3odCrjZs?si=lm03mH4TlA5tQKkt', '[NOME DO FILME 1]')">
-                    <div class="movie-poster">[POSTER / CAPA 1]</div>
-                    <div class="movie-info">
-                        <div class="movie-title">[NOME DO FILME 1]</div>
-                        <div class="movie-synopsis">[SINOPSE DO FILME 1: Escreva a sinopse detalhada aqui...]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 1]', 'https://moon.ironwallnet.net/vd/MDFobzNlX1lMVVJzeWlVR0NLekJFZzpTM2V3QzdJZnFQOGJhRm85NlFJZHpiM3YzNjZ5eW9Nd2Z4X2Z2bGdPd3lz/index-s1080p-v1-a1.m3u8', 'A Odisseia')">
+                    <div class="movie-poster">
+                        <img src="https://br.web.img3.acsta.net/img/2e/a3/2ea3af46b803a6ca55f7a236b22b8246.jpg" alt="Capa Filme 1">
                     </div>
-                </div>
-
-                <!-- [FILME 2] -->
-                <div class="movie-card" onclick="abrirPlayer('https://moon.ironwallnet.net/vd/MDFobzNlX1lMVVJzeWlVR0NLekJFZzpTM2V3QzdJZnFQOGJhRm85NlFJZHpiM3YzNjZ5eW9Nd2Z4X2Z2bGdPd3lz/index-s1080p-v1-a1.m3u8', 'A Odisseia')">
-                    <div class="movie-poster">https://wareztuga.io/_next/image?url=https%3A%2F%2Fimage.tmdb.org%2Ft%2Fp%2Fw500%2FgppJfoJbJRwjJmMKUTDeNfbrSg8.jpg&w=3840&q=75</div>
                     <div class="movie-info">
                         <div class="movie-title">A Odisseia</div>
                         <div class="movie-synopsis">Após o fim da Guerra de Troia, Ulisses, o lendário rei de Ítaca, embarca numa longa e perigosa viagem de regresso a casa. Durante dez anos de provações, enfrenta a fúria dos deuses e cruza-se com figuras míticas como o ciclope Polifemo, as sereias e a feiticeira Circe. Determinado a sobreviver, tenta voltar para junto da esposa, Penélope, e do filho, Telémaco, e recuperar o seu reino.</div>
                     </div>
                 </div>
 
+                <!-- [FILME 2] -->
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 2]', '[LINK LEGENDADO 2]', '[NOME DO FILME 2]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_2]" alt="Capa Filme 2">
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-title">[NOME DO FILME 2]</div>
+                        <div class="movie-synopsis">[SINOPSE DO FILME 2]</div>
+                    </div>
+                </div>
+
                 <!-- [FILME 3] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 3]', '[NOME DO FILME 3]')">
-                    <div class="movie-poster">[POSTER / CAPA 3]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 3]', '[LINK LEGENDADO 3]', '[NOME DO FILME 3]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_3]" alt="Capa Filme 3">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 3]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 3]</div>
@@ -327,8 +395,10 @@
                 </div>
 
                 <!-- [FILME 4] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 4]', '[NOME DO FILME 4]')">
-                    <div class="movie-poster">[POSTER / CAPA 4]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 4]', '[LINK LEGENDADO 4]', '[NOME DO FILME 4]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_4]" alt="Capa Filme 4">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 4]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 4]</div>
@@ -336,8 +406,10 @@
                 </div>
 
                 <!-- [FILME 5] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 5]', '[NOME DO FILME 5]')">
-                    <div class="movie-poster">[POSTER / CAPA 5]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 5]', '[LINK LEGENDADO 5]', '[NOME DO FILME 5]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_5]" alt="Capa Filme 5">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 5]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 5]</div>
@@ -345,8 +417,10 @@
                 </div>
 
                 <!-- [FILME 6] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 6]', '[NOME DO FILME 6]')">
-                    <div class="movie-poster">[POSTER / CAPA 6]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 6]', '[LINK LEGENDADO 6]', '[NOME DO FILME 6]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_6]" alt="Capa Filme 6">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 6]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 6]</div>
@@ -354,8 +428,10 @@
                 </div>
 
                 <!-- [FILME 7] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 7]', '[NOME DO FILME 7]')">
-                    <div class="movie-poster">[POSTER / CAPA 7]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 7]', '[LINK LEGENDADO 7]', '[NOME DO FILME 7]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_7]" alt="Capa Filme 7">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 7]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 7]</div>
@@ -363,8 +439,10 @@
                 </div>
 
                 <!-- [FILME 8] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 8]', '[NOME DO FILME 8]')">
-                    <div class="movie-poster">[POSTER / CAPA 8]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 8]', '[LINK LEGENDADO 8]', '[NOME DO FILME 8]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_8]" alt="Capa Filme 8">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 8]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 8]</div>
@@ -372,8 +450,10 @@
                 </div>
 
                 <!-- [FILME 9] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 9]', '[NOME DO FILME 9]')">
-                    <div class="movie-poster">[POSTER / CAPA 9]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 9]', '[LINK LEGENDADO 9]', '[NOME DO FILME 9]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_9]" alt="Capa Filme 9">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 9]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 9]</div>
@@ -381,8 +461,10 @@
                 </div>
 
                 <!-- [FILME 10] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 10]', '[NOME DO FILME 10]')">
-                    <div class="movie-poster">[POSTER / CAPA 10]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 10]', '[LINK LEGENDADO 10]', '[NOME DO FILME 10]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_10]" alt="Capa Filme 10">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 10]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 10]</div>
@@ -390,8 +472,10 @@
                 </div>
 
                 <!-- [FILME 11] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 11]', '[NOME DO FILME 11]')">
-                    <div class="movie-poster">[POSTER / CAPA 11]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 11]', '[LINK LEGENDADO 11]', '[NOME DO FILME 11]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_11]" alt="Capa Filme 11">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 11]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 11]</div>
@@ -399,8 +483,10 @@
                 </div>
 
                 <!-- [FILME 12] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 12]', '[NOME DO FILME 12]')">
-                    <div class="movie-poster">[POSTER / CAPA 12]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 12]', '[LINK LEGENDADO 12]', '[NOME DO FILME 12]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_12]" alt="Capa Filme 12">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 12]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 12]</div>
@@ -408,8 +494,10 @@
                 </div>
 
                 <!-- [FILME 13] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 13]', '[NOME DO FILME 13]')">
-                    <div class="movie-poster">[POSTER / CAPA 13]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 13]', '[LINK LEGENDADO 13]', '[NOME DO FILME 13]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_13]" alt="Capa Filme 13">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 13]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 13]</div>
@@ -417,8 +505,10 @@
                 </div>
 
                 <!-- [FILME 14] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 14]', '[NOME DO FILME 14]')">
-                    <div class="movie-poster">[POSTER / CAPA 14]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 14]', '[LINK LEGENDADO 14]', '[NOME DO FILME 14]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_14]" alt="Capa Filme 14">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 14]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 14]</div>
@@ -426,8 +516,10 @@
                 </div>
 
                 <!-- [FILME 15] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 15]', '[NOME DO FILME 15]')">
-                    <div class="movie-poster">[POSTER / CAPA 15]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 15]', '[LINK LEGENDADO 15]', '[NOME DO FILME 15]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_15]" alt="Capa Filme 15">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 15]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 15]</div>
@@ -435,8 +527,10 @@
                 </div>
 
                 <!-- [FILME 16] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 16]', '[NOME DO FILME 16]')">
-                    <div class="movie-poster">[POSTER / CAPA 16]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 16]', '[LINK LEGENDADO 16]', '[NOME DO FILME 16]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_16]" alt="Capa Filme 16">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 16]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 16]</div>
@@ -444,8 +538,10 @@
                 </div>
 
                 <!-- [FILME 17] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 17]', '[NOME DO FILME 17]')">
-                    <div class="movie-poster">[POSTER / CAPA 17]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 17]', '[LINK LEGENDADO 17]', '[NOME DO FILME 17]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_17]" alt="Capa Filme 17">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 17]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 17]</div>
@@ -453,8 +549,10 @@
                 </div>
 
                 <!-- [FILME 18] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 18]', '[NOME DO FILME 18]')">
-                    <div class="movie-poster">[POSTER / CAPA 18]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 18]', '[LINK LEGENDADO 18]', '[NOME DO FILME 18]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_18]" alt="Capa Filme 18">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 18]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 18]</div>
@@ -462,8 +560,10 @@
                 </div>
 
                 <!-- [FILME 19] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 19]', '[NOME DO FILME 19]')">
-                    <div class="movie-poster">[POSTER / CAPA 19]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 19]', '[LINK LEGENDADO 19]', '[NOME DO FILME 19]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_19]" alt="Capa Filme 19">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 19]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 19]</div>
@@ -471,8 +571,10 @@
                 </div>
 
                 <!-- [FILME 20] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 20]', '[NOME DO FILME 20]')">
-                    <div class="movie-poster">[POSTER / CAPA 20]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 20]', '[LINK LEGENDADO 20]', '[NOME DO FILME 20]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_20]" alt="Capa Filme 20">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 20]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 20]</div>
@@ -480,8 +582,10 @@
                 </div>
 
                 <!-- [FILME 21] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 21]', '[NOME DO FILME 21]')">
-                    <div class="movie-poster">[POSTER / CAPA 21]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 21]', '[LINK LEGENDADO 21]', '[NOME DO FILME 21]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_21]" alt="Capa Filme 21">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 21]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 21]</div>
@@ -489,8 +593,10 @@
                 </div>
 
                 <!-- [FILME 22] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 22]', '[NOME DO FILME 22]')">
-                    <div class="movie-poster">[POSTER / CAPA 22]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 22]', '[LINK LEGENDADO 22]', '[NOME DO FILME 22]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_22]" alt="Capa Filme 22">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 22]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 22]</div>
@@ -498,8 +604,10 @@
                 </div>
 
                 <!-- [FILME 23] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 23]', '[NOME DO FILME 23]')">
-                    <div class="movie-poster">[POSTER / CAPA 23]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 23]', '[LINK LEGENDADO 23]', '[NOME DO FILME 23]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_23]" alt="Capa Filme 23">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 23]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 23]</div>
@@ -507,8 +615,10 @@
                 </div>
 
                 <!-- [FILME 24] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 24]', '[NOME DO FILME 24]')">
-                    <div class="movie-poster">[POSTER / CAPA 24]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 24]', '[LINK LEGENDADO 24]', '[NOME DO FILME 24]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_24]" alt="Capa Filme 24">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 24]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 24]</div>
@@ -516,8 +626,10 @@
                 </div>
 
                 <!-- [FILME 25] -->
-                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 25]', '[NOME DO FILME 25]')">
-                    <div class="movie-poster">[POSTER / CAPA 25]</div>
+                <div class="movie-card" onclick="mostrarOpcoes('[LINK DUBLADO 25]', '[LINK LEGENDADO 25]', '[NOME DO FILME 25]')">
+                    <div class="movie-poster">
+                        <img src="[LINK_DA_IMAGEM_25]" alt="Capa Filme 25">
+                    </div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 25]</div>
                         <div class="movie-synopsis">[SINOPSE DO FILME 25]</div>
@@ -525,6 +637,18 @@
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ESCOLHA DE ÁUDIO -->
+    <div id="optionsModal">
+        <div class="options-card">
+            <h3 id="modalMovieTitle">Escolha a Versão</h3>
+            <div class="options-btn-group">
+                <button class="btn-opcao" id="btnDublado" onclick="abrirPlayerSelecionado('dublado')">Assistir Dublado</button>
+                <button class="btn-opcao" id="btnLegendado" onclick="abrirPlayerSelecionado('legendado')">Assistir Legendado</button>
+            </div>
+            <button class="btn-cancelar-op" onclick="fecharOpcoes()">Cancelar</button>
         </div>
     </div>
 
@@ -537,9 +661,20 @@
     </div>
 
     <script>
-        // CREDENCIAIS DE ACESSO
         const usuariosCadastrados = {
             "UP PLAY 1": "UP 123"
+        };
+
+        let linkDubladoAtual = "";
+        let linkLegendadoAtual = "";
+
+        // VERIFICA SE O USUÁRIO JÁ ESTÁ LOGADO AO CARREGAR A PÁGINA (F5)
+        window.onload = function() {
+            const sessaoAtiva = localStorage.getItem('upplay_logado');
+            if (sessaoAtiva === 'true') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'flex';
+            }
         };
 
         function realizarLogin() {
@@ -548,6 +683,9 @@
             const erro = document.getElementById('erroLogin');
 
             if (usuariosCadastrados[usuario] && usuariosCadastrados[usuario] === senha) {
+                // Salva a sessão na memória do navegador
+                localStorage.setItem('upplay_logado', 'true');
+                
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'flex';
             } else {
@@ -555,16 +693,39 @@
             }
         }
 
-        function abrirPlayer(url, nome) {
+        // FUNÇÃO PARA ENCERRAR A SESSÃO (LOGOUT)
+        function fazerLogout() {
+            localStorage.removeItem('upplay_logado');
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+
+        function mostrarOpcoes(urlDublado, urlLegendado, nomeFilme) {
+            linkDubladoAtual = urlDublado;
+            linkLegendadoAtual = urlLegendado;
+            document.getElementById('modalMovieTitle').innerText = nomeFilme;
+            
+            // Oculta botões caso o link não tenha sido preenchido
+            document.getElementById('btnDublado').style.display = (urlDublado.includes("LINK")) ? "none" : "block";
+            document.getElementById('btnLegendado').style.display = (urlLegendado.includes("LINK")) ? "none" : "block";
+
+            document.getElementById('optionsModal').style.display = 'flex';
+        }
+
+        function fecharOpcoes() {
+            document.getElementById('optionsModal').style.display = 'none';
+        }
+
+        function abrirPlayerSelecionado(tipo) {
+            fecharOpcoes();
             const frame = document.getElementById('videoFrame');
-            // Configura o iframe para processar o endpoint/link de reprodução de forma segura
-            frame.src = url;
+            frame.src = (tipo === 'dublado') ? linkDubladoAtual : linkLegendadoAtual;
             document.getElementById('playerModal').style.display = 'flex';
         }
 
         function fecharPlayer() {
             const frame = document.getElementById('videoFrame');
-            frame.src = ""; // Limpa o player ao fechar para interromper o fluxo
+            frame.src = "";
             document.getElementById('playerModal').style.display = 'none';
         }
 
