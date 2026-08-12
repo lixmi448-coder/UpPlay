@@ -35,7 +35,6 @@
             text-align: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.9);
         }
-        /* LOGO ESTILIZADA (Triângulo arredondado + UP Play) */
         .logo-container {
             display: flex;
             align-items: center;
@@ -47,13 +46,12 @@
             width: 50px;
             height: 50px;
             background-color: #e50914;
-            border-radius: 14px; /* Bordas arredondadas */
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
         }
-        /* Desenho geométrico do triângulo de play */
         .play-icon::after {
             content: "";
             display: block;
@@ -84,7 +82,6 @@
             border-color: #e50914;
             outline: none;
         }
-        /* Botão / Nome "Acessar perfil" */
         .btn-acessar {
             background: none;
             border: none;
@@ -107,14 +104,13 @@
             font-size: 14px;
         }
 
-        /* PAINEL PRINCIPAL (APÓS LOGIN) */
+        /* PAINEL PRINCIPAL */
         #mainApp {
             display: none;
             height: 100vh;
             flex-direction: column;
             background: #0f0f0f;
         }
-        /* Topo / Navbar */
         .navbar {
             display: flex;
             align-items: center;
@@ -159,7 +155,7 @@
             font-size: 14px;
         }
 
-        /* Conteúdo Principal / Grade de Filmes */
+        /* CONTEÚDO E GRADE */
         .content-area {
             flex: 1;
             padding: 30px 40px;
@@ -227,7 +223,7 @@
             -webkit-box-orient: vertical;
         }
 
-        /* TELA DO PLAYER (MODAL) */
+        /* MODAL DO PLAYER */
         #playerModal {
             display: none;
             position: fixed;
@@ -276,7 +272,6 @@
             </div>
             <input type="text" id="userInput" placeholder="Usuário">
             <input type="password" id="passInput" placeholder="Senha">
-            <!-- Botão "acessar perfil" em vermelho embaixo -->
             <button class="btn-acessar" onclick="realizarLogin()">Acessar perfil</button>
             <div id="erroLogin"></div>
         </div>
@@ -305,7 +300,7 @@
             <div class="catalog-grid" id="catalogGrid">
 
                 <!-- [FILME 1] -->
-                <div class="movie-card" onclick="abrirPlayer('https://vidrame.pro/vr/get/3381b725/1080.txt', '[NOME DO FILME 1]')">
+                <div class="movie-card" onclick="abrirPlayer('[LINK DE REPRODUÇÃO DO FILME 1]', '[NOME DO FILME 1]')">
                     <div class="movie-poster">[POSTER / CAPA 1]</div>
                     <div class="movie-info">
                         <div class="movie-title">[NOME DO FILME 1]</div>
@@ -542,7 +537,7 @@
     </div>
 
     <script>
-        // BANCO DE USUÁRIOS (Conforme solicitado)
+        // CREDENCIAIS DE ACESSO
         const usuariosCadastrados = {
             "UP PLAY 1": "UP 123"
         };
@@ -561,12 +556,15 @@
         }
 
         function abrirPlayer(url, nome) {
-            document.getElementById('videoFrame').src = url;
+            const frame = document.getElementById('videoFrame');
+            // Configura o iframe para processar o endpoint/link de reprodução de forma segura
+            frame.src = url;
             document.getElementById('playerModal').style.display = 'flex';
         }
 
         function fecharPlayer() {
-            document.getElementById('videoFrame').src = "";
+            const frame = document.getElementById('videoFrame');
+            frame.src = ""; // Limpa o player ao fechar para interromper o fluxo
             document.getElementById('playerModal').style.display = 'none';
         }
 
